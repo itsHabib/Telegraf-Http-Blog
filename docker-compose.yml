@@ -1,0 +1,26 @@
+version: '3'
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - "8010:8010"
+  influxdb:
+    image: influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+  telegraf:
+    image: telegraf:1.8
+    container_name: telegraf
+    links:
+      - influxdb
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - server
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
